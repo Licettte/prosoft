@@ -8,6 +8,7 @@ $\text{\ \color{lightblue}\   Технологии:\}$
 4. Prettier
 5. Eslint
 6. Vite
+7. Redux Toolkit
 ```
 ----------------------
 
