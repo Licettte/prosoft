@@ -1,10 +1,10 @@
 Стек: 
-React
-TS
-Redux
-Ant Design
-Prettier
-Eslint
+React,
+TS,
+Redux,
+Ant Design,
+Prettier,
+Eslint,
 Vite
 ----------------------
 Запуск
