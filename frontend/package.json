@@ -1,0 +1,47 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite --port 8080 --host",
+    "dev": "vite --port 8081 --host",
+    "build": "vite build",
+    "serve": "vite preview",
+    "clean": "rm -rf ./build ./node_modules"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.1",
+    "@reduxjs/toolkit": "^2.11.2",
+    "antd": "^6.3.6",
+    "axios": "^1.15.1",
+    "compose-function": "^3.0.3",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.14.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/compose-function": "^0.0.33",
+    "@types/node": "25.0.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.2",
+    "@vitejs/plugin-react-swc": "^4.3.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "sass": "^1.99.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.59.0",
+    "vite": "7.2.7",
+    "vite-plugin-svgr": "^5.2.0",
+    "vite-tsconfig-paths": "^6.1.1"
+  }
+}
