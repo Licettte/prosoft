@@ -27,5 +27,5 @@ export const permissionsByRole: Record<UserRole, Permission[]> = {
 
 export const getPermissions = (role?: UserRole): Permission[] => {
   if (!role) return [];
-  return permissionsByRole[role] ?? [];
+  return permissionsByRole[role];
 };

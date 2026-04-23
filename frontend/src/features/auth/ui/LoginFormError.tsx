@@ -1,10 +1,10 @@
-import { Alert, Form } from 'antd'
-import { memo } from 'react'
+import { Alert, Form } from 'antd';
+import { memo } from 'react';
 
 type LoginFormErrorProps = {
-  message: string
-  onClose?: () => void
-}
+  message: string;
+  onClose?: () => void;
+};
 
 export const LoginFormError = memo(
   ({ message, onClose }: LoginFormErrorProps) => {
@@ -18,8 +18,8 @@ export const LoginFormError = memo(
           onClose={onClose}
         />
       </Form.Item>
-    )
-  },
-)
+    );
+  }
+);
 
-LoginFormError.displayName = 'LoginFormError'
+LoginFormError.displayName = 'LoginFormError';

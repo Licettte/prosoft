@@ -16,13 +16,12 @@ export const BookRoutes = () => {
     <>
       <Route element={<ProtectedRoute />}>
         <Route path={APP_ROUTES.BOOKS.LIST} element={<BookListPage />} />
+        <Route path={APP_ROUTES.BOOKS.DETAIL} element={<BookDetailsPage />} />
       </Route>
 
       <Route element={<ProtectedRoute hasPermission={canAddBooks} />}>
         <Route path={APP_ROUTES.BOOKS.CREATE} element={<BookCreatePage />} />
       </Route>
-
-      <Route path={APP_ROUTES.BOOKS.DETAIL} element={<BookDetailsPage />} />
     </>
   );
 };

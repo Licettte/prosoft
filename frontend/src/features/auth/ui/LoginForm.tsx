@@ -1,15 +1,14 @@
-import { Button, Card, Form, Input } from 'antd'
-import { memo } from 'react'
+import { Button, Card, Form, Input } from 'antd';
+import { LoginFormValues } from 'features/auth/model/types';
+import { memo } from 'react';
 
-import { LoginFormError } from './LoginFormError'
+import { useLoginForm } from '../model/useLoginForm';
+import { LoginFormError } from './LoginFormError';
 
-import {useLoginForm} from "../model/useLoginForm";
-import {LoginFormValues} from "features/auth/model/types";
-
-const LOGIN_CARD_WIDTH = 400
+const LOGIN_CARD_WIDTH = 400;
 
 export const LoginForm = memo(() => {
-  const [form] = Form.useForm<LoginFormValues>()
+  const [form] = Form.useForm<LoginFormValues>();
 
   const {
     authErrorMessage,
@@ -21,7 +20,7 @@ export const LoginForm = memo(() => {
     messageContextHolder,
   } = useLoginForm({
     resetForm: () => form.resetFields(),
-  })
+  });
 
   return (
     <div
@@ -44,10 +43,7 @@ export const LoginForm = memo(() => {
           autoComplete="off"
         >
           {hasAuthError && authErrorMessage && (
-            <LoginFormError
-              message={authErrorMessage}
-              onClose={clearError}
-            />
+            <LoginFormError message={authErrorMessage} onClose={clearError} />
           )}
 
           <Form.Item
@@ -60,10 +56,7 @@ export const LoginForm = memo(() => {
               },
             ]}
           >
-            <Input
-              placeholder="Введите логин"
-              disabled={isLoginPending}
-            />
+            <Input placeholder="Введите логин" disabled={isLoginPending} />
           </Form.Item>
 
           <Form.Item
@@ -93,5 +86,5 @@ export const LoginForm = memo(() => {
         </Form>
       </Card>
     </div>
-  )
-})
+  );
+});

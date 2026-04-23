@@ -1,8 +1,7 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-
-import type { ResponseErrorBody } from 'shared/api/types'
-import { getAuthorizedUser } from 'shared/api/endpoints/auth'
-import type { AuthorizedUser } from 'shared/api/endpoints/auth'
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import type { AuthorizedUser } from 'shared/api/endpoints/auth';
+import { getAuthorizedUser } from 'shared/api/endpoints/auth';
+import type { ResponseErrorBody } from 'shared/api/types';
 
 export const fetchAuthorizedUser = createAsyncThunk<
   AuthorizedUser,
@@ -10,12 +9,12 @@ export const fetchAuthorizedUser = createAsyncThunk<
   { rejectValue: string }
 >('auth/fetchAuthorizedUser', async (_, thunkApi) => {
   try {
-    return await getAuthorizedUser()
+    return await getAuthorizedUser();
   } catch (error) {
-    const apiError = error as ResponseErrorBody
+    const apiError = error as ResponseErrorBody;
 
     return thunkApi.rejectWithValue(
-      apiError.message ?? 'Пользователь не авторизован',
-    )
+      apiError.message ?? 'Пользователь не авторизован'
+    );
   }
-})
+});

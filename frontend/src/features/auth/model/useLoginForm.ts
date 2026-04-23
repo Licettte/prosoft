@@ -1,64 +1,63 @@
-import { message } from 'antd'
-import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { message } from 'antd';
+import { authModel } from 'features/auth';
+import { LoginFormValues } from 'features/auth/model/types';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthStatus } from 'shared/api/endpoints/auth';
+import { APP_ROUTES } from 'shared/config/appRoutes';
+import { useAppDispatch, useAppSelector } from 'shared/lib/hooks/typedRedux';
 
-import { authModel } from 'features/auth'
-import { AuthStatus } from 'shared/api/endpoints/auth'
-import { APP_ROUTES } from 'shared/config/appRoutes'
-import { useAppDispatch, useAppSelector } from 'shared/lib/hooks/typedRedux'
-import {LoginFormValues} from "features/auth/model/types";
-
-const SUCCESS_MESSAGE_DURATION = 2
+const SUCCESS_MESSAGE_DURATION = 2;
 
 type UseLoginFormParams = {
-  resetForm: () => void
-}
+  resetForm: () => void;
+};
 
 export const useLoginForm = ({ resetForm }: UseLoginFormParams) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [messageApi, messageContextHolder] = message.useMessage()
+  const [messageApi, messageContextHolder] = message.useMessage();
 
-  const authStatus = useAppSelector(authModel.selectors.selectAuthStatus)
+  const authStatus = useAppSelector(authModel.selectors.selectAuthStatus);
   const authErrorMessage = useAppSelector(
-    authModel.selectors.selectAuthErrorMessage,
-  )
+    authModel.selectors.selectAuthErrorMessage
+  );
 
-  const isLoginPending = authStatus === AuthStatus.LOADING
-  const hasAuthError = Boolean(authErrorMessage)
+  const isLoginPending = authStatus === AuthStatus.LOADING;
+  const hasAuthError = Boolean(authErrorMessage);
 
-  const loginByCredentials = authModel.thunks.loginByCredentials
-  const clearAuthErrorMessage = authModel.actions.clearAuthErrorMessage
+  const loginByCredentials = authModel.thunks.loginByCredentials;
+  const clearAuthErrorMessage = authModel.actions.clearAuthErrorMessage;
 
   const handleSubmit = useCallback(
     async (values: LoginFormValues) => {
-      const loginResult = await dispatch(loginByCredentials(values))
+      const loginResult = await dispatch(loginByCredentials(values));
 
       if (loginByCredentials.fulfilled.match(loginResult)) {
-        resetForm()
+        resetForm();
 
         await messageApi.success(
           'Авторизация прошла успешно',
-          SUCCESS_MESSAGE_DURATION,
-        )
+          SUCCESS_MESSAGE_DURATION
+        );
 
-        navigate(APP_ROUTES.BOOKS.LIST, { replace: true })
+        navigate(APP_ROUTES.BOOKS.LIST, { replace: true });
       }
     },
-    [dispatch, loginByCredentials, messageApi, navigate, resetForm],
-  )
+    [dispatch, loginByCredentials, messageApi, navigate, resetForm]
+  );
 
   const handleValuesChange = useCallback(() => {
     if (hasAuthError) {
-      dispatch(clearAuthErrorMessage())
+      dispatch(clearAuthErrorMessage());
     }
-  }, [clearAuthErrorMessage, dispatch, hasAuthError])
+  }, [clearAuthErrorMessage, dispatch, hasAuthError]);
 
   const clearError = useCallback(() => {
-    dispatch(clearAuthErrorMessage())
-  }, [clearAuthErrorMessage, dispatch])
+    dispatch(clearAuthErrorMessage());
+  }, [clearAuthErrorMessage, dispatch]);
 
   return {
     authErrorMessage,
@@ -68,5 +67,5 @@ export const useLoginForm = ({ resetForm }: UseLoginFormParams) => {
     handleValuesChange,
     clearError,
     messageContextHolder,
-  }
-}
+  };
+};

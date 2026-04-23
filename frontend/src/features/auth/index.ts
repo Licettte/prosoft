@@ -1,14 +1,15 @@
-import {authReducer, clearAuthErrorMessage} from "features/auth/model/slice";
 import {
   selectAuthErrorMessage,
-  selectAuthState, selectAuthStatus,
+  selectAuthState,
+  selectAuthStatus,
   selectCurrentUser,
   selectCurrentUserRole,
-  selectIsAuthenticated, selectIsAuthInitialized
-} from "features/auth/model/selectors";
-import {loginByCredentials} from "features/auth/thunks/loginByCredentials";
-import {fetchAuthorizedUser} from "features/auth/thunks/fetchAuthorizedUser";
-
+  selectIsAuthenticated,
+  selectIsAuthInitialized,
+} from 'features/auth/model/selectors';
+import { authReducer, clearAuthErrorMessage } from 'features/auth/model/slice';
+import { fetchAuthorizedUser } from 'features/auth/thunks/fetchAuthorizedUser';
+import { loginByCredentials } from 'features/auth/thunks/loginByCredentials';
 
 export const authModel = {
   reducer: authReducer,
@@ -31,4 +32,4 @@ export const authModel = {
   actions: {
     clearAuthErrorMessage,
   },
-} as const
+} as const;
