@@ -1,28 +1,56 @@
 import {
-  selectBookById,
-  selectBooks,
-  selectBooksError,
-  selectBooksLoading,
+  selectBookDetails,
+  selectBookDetailsError,
+  selectBookDetailsStatus,
+  selectBookList,
+  selectBookListError,
+  selectBookListStatus,
+  selectBookMutationError,
+  selectBookTotalCount,
+  selectIsCreateBookLoading,
+  selectIsDeleteBookLoading,
+  selectIsUpdateBookLoading,
 } from 'features/book/model/selectors';
-import { clearSelectedBook } from 'features/book/model/slice';
+import {
+  clearDetailsError,
+  clearListError,
+  clearMutationError,
+  clearSelectedBook,
+  resetMutationStatuses,
+} from 'features/book/model/slice';
 import { deleteBookThunk } from 'features/book/thunks/deleteBooks';
 import { fetchBookById, fetchBooks } from 'features/book/thunks/fetchBooks';
 import { publishBookThunk } from 'features/book/thunks/publishBook';
 import { updateBookThunk } from 'features/book/thunks/updateBook';
 
-export const selectedBookModel = {
+export const bookModel = {
   selectors: {
-    selectBooks,
-    selectBooksLoading,
-    selectBooksError,
-    selectBookById,
+    selectBookList,
+    selectBookListStatus,
+    selectBookListError,
+    selectBookTotalCount,
+
+    selectBookDetails,
+    selectBookDetailsStatus,
+    selectBookDetailsError,
+
+    selectBookMutationError,
+    selectIsCreateBookLoading,
+    selectIsUpdateBookLoading,
+    selectIsDeleteBookLoading,
   },
-  actions: { clearSelectedBook },
+  actions: {
+    clearListError,
+    clearDetailsError,
+    clearMutationError,
+    clearSelectedBook,
+    resetMutationStatuses,
+  },
   thunks: {
-    deleteBookThunk,
     fetchBooks,
+    fetchBookById,
     publishBookThunk,
     updateBookThunk,
-    fetchBookById,
+    deleteBookThunk,
   },
 } as const;

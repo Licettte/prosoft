@@ -1,34 +1,41 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { BOOK_ERRORS } from 'features/book/lib/utils';
 import { getBook, getBooks } from 'shared/api/endpoints/book/endpoints';
 import type {
+  Book,
   GetBookParams,
   GetBooksRequest,
   GetBooksResponse,
 } from 'shared/api/endpoints/book/types';
-import type { ResponseErrorBody } from 'shared/api/types';
 
 export const fetchBooks = createAsyncThunk<
   GetBooksResponse,
   GetBooksRequest | undefined,
   { rejectValue: string }
->('books/fetchBooks', async (params, thunkApi) => {
+>('books/fetchBooks', async (params, { rejectWithValue }) => {
   try {
     return await getBooks(params);
   } catch (error) {
-    const apiError = error as ResponseErrorBody;
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
 
-    return thunkApi.rejectWithValue(apiError.message ?? 'Ошибка загрузки книг');
+    return rejectWithValue(BOOK_ERRORS.FETCH_LIST);
   }
 });
 
-export const fetchBookById = createAsyncThunk(
-  'books/fetchBookById',
-  async ({ bookId }: GetBookParams, { rejectWithValue }) => {
-    try {
-      const response = await getBook({ bookId });
-      return response;
-    } catch {
-      return rejectWithValue('Ошибка загрузки книги');
+export const fetchBookById = createAsyncThunk<
+  Book,
+  GetBookParams,
+  { rejectValue: string }
+>('books/fetchBookById', async ({ bookId }, { rejectWithValue }) => {
+  try {
+    return await getBook({ bookId });
+  } catch (error) {
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
     }
+
+    return rejectWithValue(BOOK_ERRORS.FETCH_DETAILS);
   }
-);
+});

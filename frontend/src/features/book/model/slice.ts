@@ -2,128 +2,181 @@ import { createSlice } from '@reduxjs/toolkit';
 import { deleteBookThunk } from 'features/book/thunks/deleteBooks';
 import type { Book } from 'shared/api/endpoints/book/types';
 
+import { BOOK_ERRORS } from '../lib/utils';
 import { fetchBookById, fetchBooks } from '../thunks/fetchBooks';
 import { publishBookThunk } from '../thunks/publishBook';
 import { updateBookThunk } from '../thunks/updateBook';
 
+export type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
+
 export type BooksState = {
-  books: Book[];
-  selectedBook: Book | null;
-  totalCount: number;
-  isLoading: boolean;
-  error: string | null;
+  list: {
+    items: Book[];
+    totalCount: number;
+    status: RequestStatus;
+    error: string | null;
+  };
+  details: {
+    item: Book | null;
+    status: RequestStatus;
+    error: string | null;
+  };
+  mutations: {
+    createStatus: RequestStatus;
+    updateStatus: RequestStatus;
+    deleteStatus: RequestStatus;
+    error: string | null;
+  };
 };
 
 const initialState: BooksState = {
-  books: [],
-  selectedBook: null,
-  totalCount: 0,
-  isLoading: false,
-  error: null,
+  list: {
+    items: [],
+    totalCount: 0,
+    status: 'idle',
+    error: null,
+  },
+  details: {
+    item: null,
+    status: 'idle',
+    error: null,
+  },
+  mutations: {
+    createStatus: 'idle',
+    updateStatus: 'idle',
+    deleteStatus: 'idle',
+    error: null,
+  },
 };
 
 export const booksSlice = createSlice({
   name: 'books',
   initialState,
   reducers: {
-    clearBooksError: (state) => {
-      state.error = null;
+    clearListError: (state) => {
+      state.list.error = null;
+    },
+    clearDetailsError: (state) => {
+      state.details.error = null;
+    },
+    clearMutationError: (state) => {
+      state.mutations.error = null;
     },
     clearSelectedBook: (state) => {
-      state.selectedBook = null;
+      state.details.item = null;
+      state.details.status = 'idle';
+      state.details.error = null;
+    },
+    resetMutationStatuses: (state) => {
+      state.mutations.createStatus = 'idle';
+      state.mutations.updateStatus = 'idle';
+      state.mutations.deleteStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
     builder
+
       .addCase(fetchBooks.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.list.status = 'loading';
+        state.list.error = null;
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.books = action.payload.books;
-        state.totalCount = action.payload.totalCount;
+        state.list.status = 'succeeded';
+        state.list.items = action.payload.books;
+        state.list.totalCount = action.payload.totalCount;
       })
       .addCase(fetchBooks.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = (action.payload as string) ?? 'Ошибка загрузки книг';
+        state.list.status = 'failed';
+        state.list.error = action.payload ?? BOOK_ERRORS.FETCH_LIST;
       })
 
       .addCase(fetchBookById.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.details.status = 'loading';
+        state.details.error = null;
       })
       .addCase(fetchBookById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.selectedBook = action.payload;
+        state.details.status = 'succeeded';
+        state.details.item = action.payload;
 
-        const exists = state.books.some(
+        const exists = state.list.items.some(
           (book) => book.id === action.payload.id
         );
+
         if (!exists) {
-          state.books.push(action.payload);
+          state.list.items.push(action.payload);
+          state.list.totalCount += 1;
         }
       })
       .addCase(fetchBookById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = (action.payload as string) ?? 'Ошибка загрузки книги';
+        state.details.status = 'failed';
+        state.details.error = action.payload ?? BOOK_ERRORS.FETCH_DETAILS;
       })
 
       .addCase(publishBookThunk.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.mutations.createStatus = 'loading';
+        state.mutations.error = null;
       })
       .addCase(publishBookThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.books.unshift(action.payload);
-        state.totalCount += 1;
+        state.mutations.createStatus = 'succeeded';
+        state.list.items.unshift(action.payload);
+        state.list.totalCount += 1;
       })
       .addCase(publishBookThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = (action.payload as string) ?? 'Ошибка публикации книги';
+        state.mutations.createStatus = 'failed';
+        state.mutations.error = action.payload ?? BOOK_ERRORS.CREATE;
       })
 
       .addCase(updateBookThunk.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.mutations.updateStatus = 'loading';
+        state.mutations.error = null;
       })
       .addCase(updateBookThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.mutations.updateStatus = 'succeeded';
 
-        state.books = state.books.map((book) =>
+        state.list.items = state.list.items.map((book) =>
           book.id === action.payload.id ? action.payload : book
         );
 
-        if (state.selectedBook?.id === action.payload.id) {
-          state.selectedBook = action.payload;
+        if (state.details.item?.id === action.payload.id) {
+          state.details.item = action.payload;
         }
       })
       .addCase(updateBookThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = (action.payload as string) ?? 'Ошибка обновления книги';
+        state.mutations.updateStatus = 'failed';
+        state.mutations.error = action.payload ?? BOOK_ERRORS.UPDATE;
       })
 
+      // ===== DELETE =====
       .addCase(deleteBookThunk.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.mutations.deleteStatus = 'loading';
+        state.mutations.error = null;
       })
       .addCase(deleteBookThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.books = state.books.filter(
+        state.mutations.deleteStatus = 'succeeded';
+
+        state.list.items = state.list.items.filter(
           (book) => book.id !== action.payload.bookId
         );
-        state.totalCount -= 1;
 
-        if (state.selectedBook?.id === action.payload.bookId) {
-          state.selectedBook = null;
+        state.list.totalCount = Math.max(0, state.list.totalCount - 1);
+
+        if (state.details.item?.id === action.payload.bookId) {
+          state.details.item = null;
         }
       })
       .addCase(deleteBookThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = (action.payload as string) ?? 'Ошибка удаления книги';
+        state.mutations.deleteStatus = 'failed';
+        state.mutations.error = action.payload ?? BOOK_ERRORS.DELETE;
       });
   },
 });
 
-export const { clearBooksError, clearSelectedBook } = booksSlice.actions;
+export const {
+  clearListError,
+  clearDetailsError,
+  clearMutationError,
+  clearSelectedBook,
+  resetMutationStatuses,
+} = booksSlice.actions;
+
 export const booksReducer = booksSlice.reducer;

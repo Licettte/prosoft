@@ -1,38 +1,39 @@
-import { useEffect } from 'react'
-
-import { useAppDispatch, useAppSelector } from 'shared/lib/hooks/typedRedux'
-import { selectedBookModel } from 'features/book'
-import { fetchBooks } from 'features/book/thunks/fetchBooks'
-import { clearBooksError } from 'features/book/model/slice'
+import { bookModel } from 'features/book';
+import { clearListError } from 'features/book/model/slice';
+import { fetchBooks } from 'features/book/thunks/fetchBooks';
+import { useCallback, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'shared/lib/hooks/typedRedux';
 
 export const useBooksLoader = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const books = useAppSelector(selectedBookModel.selectors.selectBooks)
-  const isLoading = useAppSelector(selectedBookModel.selectors.selectBooksLoading)
-  const error = useAppSelector(selectedBookModel.selectors.selectBooksError)
+  const books = useAppSelector(bookModel.selectors.selectBookList);
+  const status = useAppSelector(bookModel.selectors.selectBookListStatus);
+  const error = useAppSelector(bookModel.selectors.selectBookListError);
 
   useEffect(() => {
-    dispatch(fetchBooks())
+    if (status === 'idle') {
+      dispatch(fetchBooks());
+    }
 
     return () => {
-      dispatch(clearBooksError())
-    }
-  }, [dispatch])
+      dispatch(clearListError());
+    };
+  }, [dispatch, status]);
 
-  const resetError = () => {
-    dispatch(clearBooksError())
-  }
+  const resetError = useCallback(() => {
+    dispatch(clearListError());
+  }, [dispatch]);
 
-  const reloadBooks = () => {
-    dispatch(fetchBooks())
-  }
+  const reloadBooks = useCallback(() => {
+    dispatch(fetchBooks());
+  }, [dispatch]);
 
   return {
-    books: Array.isArray(books) ? books : [],
-    isLoading,
+    books,
+    isLoading: status === 'loading',
     error,
     resetError,
     reloadBooks,
-  }
-}
+  };
+};
