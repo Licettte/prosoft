@@ -1,25 +1,27 @@
-import { Alert, Form } from 'antd';
-import { memo } from 'react';
+import { Alert } from 'antd';
+
+import styles from './LoginForm.module.scss';
 
 type LoginFormErrorProps = {
   message: string;
   onClose?: () => void;
+  closable?: boolean;
 };
 
-export const LoginFormError = memo(
-  ({ message, onClose }: LoginFormErrorProps) => {
-    return (
-      <Form.Item>
-        <Alert
-          type="error"
-          message={message}
-          showIcon
-          closable
-          onClose={onClose}
-        />
-      </Form.Item>
-    );
-  }
-);
-
-LoginFormError.displayName = 'LoginFormError';
+export const LoginFormError = ({
+  message,
+  onClose,
+  closable = true,
+}: LoginFormErrorProps) => {
+  return (
+    <div className={styles.wrapper}>
+      <Alert
+        type="error"
+        message={message}
+        showIcon
+        closable={closable}
+        onClose={onClose}
+      />
+    </div>
+  );
+};

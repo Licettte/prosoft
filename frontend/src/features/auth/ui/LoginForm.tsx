@@ -1,13 +1,11 @@
 import { Button, Card, Form, Input } from 'antd';
 import { LoginFormValues } from 'features/auth/model/types';
-import { memo } from 'react';
 
 import { useLoginForm } from '../model/useLoginForm';
+import styles from './LoginForm.module.scss';
 import { LoginFormError } from './LoginFormError';
 
-const LOGIN_CARD_WIDTH = 400;
-
-export const LoginForm = memo(() => {
+export const LoginForm = () => {
   const [form] = Form.useForm<LoginFormValues>();
 
   const {
@@ -23,24 +21,17 @@ export const LoginForm = memo(() => {
   });
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-      }}
-    >
+    <div className={styles.page}>
       {messageContextHolder}
 
-      <Card title="Вход" style={{ width: LOGIN_CARD_WIDTH }}>
+      <Card title="Вход" className={styles.card}>
         <Form<LoginFormValues>
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
           onValuesChange={handleValuesChange}
           autoComplete="off"
+          disabled={isLoginPending}
         >
           {hasAuthError && authErrorMessage && (
             <LoginFormError message={authErrorMessage} onClose={clearError} />
@@ -56,7 +47,7 @@ export const LoginForm = memo(() => {
               },
             ]}
           >
-            <Input placeholder="Введите логин" disabled={isLoginPending} />
+            <Input placeholder="Введите логин" aria-label="Логин" />
           </Form.Item>
 
           <Form.Item
@@ -69,10 +60,7 @@ export const LoginForm = memo(() => {
               },
             ]}
           >
-            <Input.Password
-              placeholder="Введите пароль"
-              disabled={isLoginPending}
-            />
+            <Input.Password placeholder="Введите пароль" aria-label="Пароль" />
           </Form.Item>
 
           <Button
@@ -87,4 +75,4 @@ export const LoginForm = memo(() => {
       </Card>
     </div>
   );
-});
+};
