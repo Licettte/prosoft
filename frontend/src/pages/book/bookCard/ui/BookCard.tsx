@@ -42,4 +42,3 @@ export const BookCard = memo(({ book }: BookCardProps) => {
   );
 });
 
-BookCard.displayName = 'BookCard';
