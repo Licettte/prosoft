@@ -1,50 +1,52 @@
-import {BookSortField, SortOrder} from "shared/api/endpoints/book/types";
+import { BookSortField, SortOrder } from 'shared/api/endpoints/book/types';
 
-type SortOption = {
-  label: string
-  value: string
+export type BookSortOption = {
+  label: string;
+  value: string;
   config: {
-    sortField: BookSortField
-    sortOrder: SortOrder
-  }
-}
-
-export const sortOptions: SortOption[] = [
-  {
-    label: 'По названию (А-Я)',
-    value: 'name-asc',
-    config: {
-      sortField: BookSortField.NAME,
-      sortOrder: SortOrder.ASC,
-    },
-  },
-  {
-    label: 'По названию (Я-А)',
-    value: 'name-desc',
-    config: {
-      sortField: BookSortField.NAME,
-      sortOrder: SortOrder.DESC,
-    },
-  },
-  {
-    label: 'По дате публикации (сначала новые)',
-    value: 'created_at-desc',
-    config: {
-      sortField: BookSortField.CREATED_AT,
-      sortOrder: SortOrder.DESC,
-    },
-  },
-  {
-    label: 'По дате публикации (сначала старые)',
-    value: 'created_at-asc',
-    config: {
-      sortField: BookSortField.CREATED_AT,
-      sortOrder: SortOrder.ASC,
-    },
-  },
-]
+    sort: BookSortField;
+    order: SortOrder;
+  };
+};
 
 export const defaultSortConfig = {
-  sortField: BookSortField.CREATED_AT,
-  sortOrder: SortOrder.DESC,
-}
+  sort: BookSortField.CREATED_AT,
+  order: SortOrder.DESC,
+} as const;
+
+export const sortOptions: BookSortOption[] = [
+  {
+    label: 'Сначала новые',
+    value: 'created_at-desc',
+    config: {
+      sort: BookSortField.CREATED_AT,
+      order: SortOrder.DESC,
+    },
+  },
+  {
+    label: 'Сначала старые',
+    value: 'created_at-asc',
+    config: {
+      sort: BookSortField.CREATED_AT,
+      order: SortOrder.ASC,
+    },
+  },
+  {
+    label: 'По названию А–Я',
+    value: 'name-asc',
+    config: {
+      sort: BookSortField.NAME,
+      order: SortOrder.ASC,
+    },
+  },
+  {
+    label: 'По названию Я–А',
+    value: 'name-desc',
+    config: {
+      sort: BookSortField.NAME,
+      order: SortOrder.DESC,
+    },
+  },
+];
+
+export const DEFAULT_SORT_VALUE = 'created_at-desc';

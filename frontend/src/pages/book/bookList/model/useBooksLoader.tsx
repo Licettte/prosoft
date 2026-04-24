@@ -2,9 +2,15 @@ import { bookModel } from 'features/book';
 import { clearListError } from 'features/book/model/slice';
 import { fetchBooks } from 'features/book/thunks/fetchBooks';
 import { useCallback, useEffect } from 'react';
+import { BookSortField, SortOrder } from 'shared/api/endpoints/book/types';
 import { useAppDispatch, useAppSelector } from 'shared/lib/hooks/typedRedux';
 
-export const useBooksLoader = () => {
+type UseBooksLoaderParams = {
+  sort: BookSortField;
+  order: SortOrder;
+};
+
+export const useBooksLoader = ({ sort, order }: UseBooksLoaderParams) => {
   const dispatch = useAppDispatch();
 
   const books = useAppSelector(bookModel.selectors.selectBookList);
@@ -12,22 +18,30 @@ export const useBooksLoader = () => {
   const error = useAppSelector(bookModel.selectors.selectBookListError);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchBooks());
-    }
+    dispatch(
+      fetchBooks({
+        sort,
+        order,
+      })
+    );
 
     return () => {
       dispatch(clearListError());
     };
-  }, [dispatch, status]);
+  }, [dispatch, sort, order]);
 
   const resetError = useCallback(() => {
     dispatch(clearListError());
   }, [dispatch]);
 
   const reloadBooks = useCallback(() => {
-    dispatch(fetchBooks());
-  }, [dispatch]);
+    dispatch(
+      fetchBooks({
+        sort,
+        order,
+      })
+    );
+  }, [dispatch, sort, order]);
 
   return {
     books,

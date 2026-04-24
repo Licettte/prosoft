@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import { BookCard } from 'pages/book';
 import { sortOptions } from 'pages/book/bookList/lib/utils';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from 'shared/config/appRoutes';
 import { usePermissions } from 'shared/permission/lib/usePermissions';
@@ -23,22 +24,30 @@ const { Text } = Typography;
 const BookList = () => {
   const navigate = useNavigate();
 
-  const { books, isLoading, error, resetError } = useBooksLoader();
   const {
     showOnlyAvailable,
     setShowOnlyAvailable,
     selectedSortValue,
     setSelectedSortValue,
-    filteredAndSortedBooks,
-  } = useBookFilters(books);
+    selectedSortConfig,
+  } = useBookFilters();
+
+  const { books, isLoading, error, resetError } = useBooksLoader({
+    sort: selectedSortConfig.sort,
+    order: selectedSortConfig.order,
+  });
 
   const { canAddBooks } = usePermissions();
+
+  const visibleBooks = useMemo(() => {
+    return showOnlyAvailable ? books.filter((book) => book.isAvailable) : books;
+  }, [books, showOnlyAvailable]);
 
   const handleCreateBook = () => {
     navigate(APP_ROUTES.BOOKS.CREATE);
   };
 
-  const hasBooks = filteredAndSortedBooks.length > 0;
+  const hasBooks = visibleBooks.length > 0;
   const showEmpty = !isLoading && !error && !hasBooks;
 
   return (
@@ -95,7 +104,7 @@ const BookList = () => {
 
       {!isLoading && hasBooks && (
         <div className={styles.grid}>
-          {filteredAndSortedBooks.map((book) => (
+          {visibleBooks.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
         </div>
